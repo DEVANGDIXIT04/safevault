@@ -25,6 +25,7 @@ main() {
     printf 'Missing config file: %s\n' "$CONFIG_FILE" >&2
     exit 1
   fi
+  # shellcheck source=/dev/null
   source "$CONFIG_FILE"
   trap notify_failure ERR
 
