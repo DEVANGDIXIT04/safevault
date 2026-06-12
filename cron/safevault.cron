@@ -1,0 +1,18 @@
+# SafeVault Cron Configuration
+# To install, copy to /etc/cron.d/safevault or run: crontab safevault.cron
+
+# Ensure PATH and environments are set correctly for scripts
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PROJECT_DIR=/opt/safevault
+
+# Run a full physical/logical backup daily at 2:00 AM
+0 2 * * * root $PROJECT_DIR/scripts/backup-full.sh >> $PROJECT_DIR/logs/cron-backup-full.log 2>&1
+
+# Run a WAL base backup weekly on Sunday at 3:00 AM (to reset the WAL replay baseline)
+0 3 * * 0 root $PROJECT_DIR/scripts/backup-wal-setup.sh >> $PROJECT_DIR/logs/cron-backup-wal.log 2>&1
+
+# Run a Disaster Recovery Drill weekly on Monday at 4:00 AM
+0 4 * * 1 root $PROJECT_DIR/scripts/verify-drill.sh >> $PROJECT_DIR/logs/cron-verify-drill.log 2>&1
+
+# Apply S3 lifecycle retention policy daily at 5:00 AM
+0 5 * * * root $PROJECT_DIR/scripts/apply-lifecycle.sh >> $PROJECT_DIR/logs/cron-lifecycle.log 2>&1

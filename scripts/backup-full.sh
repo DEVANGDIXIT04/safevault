@@ -136,7 +136,13 @@ main() {
   rm -f "$dump_path"
   prune_old_local_backups
 
-  log "INFO" "Full backup completed: $(basename "$encrypted_path")"
+  local encrypted_name
+  encrypted_name="$(basename "$encrypted_path")"
+  log "INFO" "Full backup completed: $encrypted_name"
+
+  if [[ -n "${WEBHOOK_URL:-}" ]]; then
+    "$SCRIPT_DIR/notify.sh" "INFO" "SafeVault full backup completed successfully: $encrypted_name"
+  fi
 }
 
 main "$@"

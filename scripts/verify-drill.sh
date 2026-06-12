@@ -183,6 +183,9 @@ main() {
   if [[ "$production_counts" == "$restore_counts" ]]; then
     log "INFO" "DR drill PASS"
     printf 'PASS: restored counts match production.\n'
+    if [[ -n "${WEBHOOK_URL:-}" ]]; then
+      "$SCRIPT_DIR/notify.sh" "INFO" "SafeVault DR drill completed successfully. Restored counts match production."
+    fi
   else
     log "ERROR" "DR drill FAIL"
     printf 'FAIL: restored counts do not match production.\n' >&2

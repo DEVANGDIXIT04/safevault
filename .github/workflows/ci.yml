@@ -1,0 +1,71 @@
+name: SafeVault CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './scripts'
+
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    needs: shellcheck
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup test environment
+        run: |
+          # Generate a throwaway GPG key for tests
+          mkdir -p keys
+          cat > keys/test-key-gen.batch <<EOF
+          %echo Generating standard key
+          Key-Type: default
+          Subkey-Type: default
+          Name-Real: Test User
+          Name-Email: test@example.local
+          Expire-Date: 0
+          %no-protection
+          %commit
+          %echo done
+          EOF
+          gpg --batch --generate-key keys/test-key-gen.batch
+          gpg --armor --export test@example.local > keys/safevault.pub.asc
+
+          # Copy example config
+          cp safevault.conf.example safevault.conf
+          sed -i 's/safevault@example.local/test@example.local/g' safevault.conf
+
+          # Ensure minio data directory exists and has right permissions
+          mkdir -p minio-data
+          chmod 777 minio-data
+
+      - name: Start Docker Compose
+        run: |
+          docker compose up -d
+          # Wait for Postgres and MinIO to be ready
+          sleep 15
+          docker compose logs
+
+      - name: Initialize MinIO Bucket
+        run: |
+          # Create bucket manually for test
+          docker exec safevault-minio bash -c "mc alias set myminio http://localhost:9000 minioadmin minioadmin && mc mb myminio/safevault-backups"
+
+      - name: Test Full Backup
+        run: |
+          ./scripts/backup-full.sh
+
+      - name: Test Verify Drill
+        run: |
+          ./scripts/verify-drill.sh

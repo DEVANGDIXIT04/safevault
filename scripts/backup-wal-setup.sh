@@ -146,7 +146,13 @@ main() {
   upload_and_verify "$encrypted_path" "$checksum_path"
   rm -f "$dump_path"
 
-  log "INFO" "WAL setup and base backup completed: $(basename "$encrypted_path")"
+  local encrypted_name
+  encrypted_name="$(basename "$encrypted_path")"
+  log "INFO" "WAL setup and base backup completed: $encrypted_name"
+
+  if [[ -n "${WEBHOOK_URL:-}" ]]; then
+    "$SCRIPT_DIR/notify.sh" "INFO" "SafeVault WAL setup and base backup completed successfully: $encrypted_name"
+  fi
 }
 
 main "$@"

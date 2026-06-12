@@ -6,14 +6,28 @@
       "Filter": {
         "Prefix": "full/"
       },
-      "Transitions": [
-        {
-          "Days": 30,
-          "StorageClass": "STANDARD_IA"
-        }
-      ],
       "Expiration": {
         "Days": 90
+      }
+    },
+    {
+      "ID": "safevault-base-backup-retention",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "base/"
+      },
+      "Expiration": {
+        "Days": 60
+      }
+    },
+    {
+      "ID": "safevault-wal-retention",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "wal/"
+      },
+      "Expiration": {
+        "Days": 60
       }
     }
   ]
