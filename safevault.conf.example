@@ -1,0 +1,27 @@
+# Copy this file to safevault.conf and edit values for your environment.
+
+PROJECT_NAME="safevault"
+
+POSTGRES_CONTAINER="safevault-postgres"
+POSTGRES_HOST="localhost"
+POSTGRES_PORT="55432"
+POSTGRES_DB="fundwave"
+POSTGRES_USER="safevault"
+POSTGRES_PASSWORD="safevault_dev_password"
+
+BACKUP_DIR="./backups"
+LOG_FILE="./logs/safevault.log"
+RETENTION_DAYS="7"
+
+GPG_HOME="./.gnupg"
+GPG_BIN="gpg"
+GPG_RECIPIENT="safevault@example.local"
+
+AWS_ACCESS_KEY_ID="minioadmin"
+AWS_SECRET_ACCESS_KEY="minioadmin123"
+AWS_DEFAULT_REGION="us-east-1"
+S3_BUCKET="safevault-backups"
+S3_PREFIX="full"
+S3_ENDPOINT_URL="http://localhost:9000"
+
+WEBHOOK_URL=""

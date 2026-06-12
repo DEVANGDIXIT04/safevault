@@ -1,0 +1,9 @@
+safevault.conf
+backups/*
+!backups/.gitkeep
+logs/*
+!logs/.gitkeep
+keys/*
+!keys/.gitkeep
+.gnupg/
+
