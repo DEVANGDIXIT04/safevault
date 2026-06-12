@@ -136,7 +136,7 @@ restore_dump() {
     --username "$POSTGRES_USER" \
     --dbname "$POSTGRES_DB" \
     --no-owner \
-    --role "$POSTGRES_USER" <"$dump_path"
+    --role "$POSTGRES_USER" <"$dump_path" || log "WARN" "pg_restore returned non-zero (warnings likely)"
 }
 
 table_counts() {

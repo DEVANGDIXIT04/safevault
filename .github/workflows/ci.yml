@@ -49,8 +49,27 @@ jobs:
       - name: Start Docker Compose
         run: |
           docker compose up -d
-          # Wait for Postgres and MinIO to be ready
-          sleep 15
+          
+          # Wait for Postgres to be fully seeded
+          for i in {1..30}; do
+            if docker exec safevault-postgres psql -U safevault -d fundwave -c "SELECT 1 FROM funds;" >/dev/null 2>&1; then
+              echo "Postgres seeded!"
+              break
+            fi
+            echo "Waiting for Postgres seed..."
+            sleep 2
+          done
+          
+          # Wait for MinIO
+          for i in {1..30}; do
+            if docker exec safevault-minio mc ready local >/dev/null 2>&1; then
+              echo "MinIO ready!"
+              break
+            fi
+            echo "Waiting for MinIO..."
+            sleep 2
+          done
+          
           docker compose logs
 
       - name: Initialize MinIO Bucket
