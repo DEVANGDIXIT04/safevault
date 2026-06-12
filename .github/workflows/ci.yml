@@ -26,20 +26,19 @@ jobs:
 
       - name: Setup test environment
         run: |
+          # Copy example config
+          cp safevault.conf.example safevault.conf
+          sed -i 's/safevault@example.local/test@example.local/g' safevault.conf
+
+          # Set up GPG directory as expected by safevault.conf
+          export GNUPGHOME="$PWD/.gnupg"
+          mkdir -p "$GNUPGHOME"
+          chmod 700 "$GNUPGHOME"
+
           # Generate a throwaway GPG key for tests
+          gpg --batch --passphrase '' --quick-generate-key test@example.local default default never
+          
           mkdir -p keys
-          cat > keys/test-key-gen.batch <<EOF
-          %echo Generating standard key
-          Key-Type: default
-          Subkey-Type: default
-          Name-Real: Test User
-          Name-Email: test@example.local
-          Expire-Date: 0
-          %no-protection
-          %commit
-          %echo done
-          EOF
-          gpg --batch --generate-key keys/test-key-gen.batch
           gpg --armor --export test@example.local > keys/safevault.pub.asc
 
           # Copy example config
