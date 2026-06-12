@@ -75,7 +75,7 @@ jobs:
       - name: Initialize MinIO Bucket
         run: |
           # Create bucket manually for test
-          docker exec safevault-minio bash -c "mc alias set myminio http://localhost:9000 minioadmin minioadmin && mc mb myminio/safevault-backups"
+          docker exec safevault-minio bash -c "mc alias set myminio http://localhost:9000 minioadmin minioadmin123 && mc mb myminio/safevault-backups"
 
       - name: Test Full Backup
         run: |
