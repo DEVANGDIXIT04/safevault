@@ -41,9 +41,6 @@ jobs:
           mkdir -p keys
           gpg --armor --export test@example.local > keys/safevault.pub.asc
 
-          # Copy example config
-          cp safevault.conf.example safevault.conf
-          sed -i 's/safevault@example.local/test@example.local/g' safevault.conf
 
           # Ensure minio data directory exists and has right permissions
           mkdir -p minio-data
